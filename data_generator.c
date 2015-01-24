@@ -67,6 +67,9 @@ int main(int argc, char *argv[])
 	char *temp = (char *)malloc(100);
 	int r;
 
+	//sleep for t seconds to wait for db init to finish...
+	sleep(t);
+
 	for(;;)
 	{
 

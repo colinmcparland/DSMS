@@ -14,17 +14,21 @@ int main(int argc, char *argv[])
 	{
 		printf("Error connecting to database.  %s\n", sqlite3_errmsg(db));
 	}
-	else//if so, add this data to the db.
+	else//if so, init the database
 	{
-		//Lets add the data to the database.  Delimited into tables by spaces
 		printf("Init DB.\n\n");
-		//this will be the init file
+
 		char *sql;
+
+		sql = "DELETE FROM TEAM;";
+
+		sqlite3_exec(db, sql, 0, 0, 0);
+
 		sql = "CREATE TABLE TEAM("\
 			"Name varchar(255) NOT NULL,"\
 			"Number int NOT NULL,"\
 			"Position varchar(255) NOT NULL);";
-		//execute the sql with error checking
+		//execute the sql
 		sqlite3_exec(db, sql, 0, 0, 0);
 
   		sqlite3_close(db);
