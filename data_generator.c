@@ -24,7 +24,6 @@ int main(int argc, char *argv[])
 	*
 	*********************************/
 
-	printf("Data stream init.\n\n");
 
 	//get time between deployments	
 	int t;

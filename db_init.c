@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
 	}
 	else//if so, init the database
 	{
-		printf("Init DB.\n\n");
 
 		char *sql;
 
