@@ -13,6 +13,16 @@
 #include <sys/types.h> 
 #include <sqlite3.h>
 
+static int callback(void *NotUsed, int argc, char **argv, char **azColName){
+   int i;
+   for(i=0; i<argc; i++){
+      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+   }
+   printf("\n");
+   return 0;
+}
+
+
 char *usr1;
 char *dbname;
 
@@ -48,26 +58,11 @@ void my_handler(int signum)
 		*
 		*  Line acquired.  Now we need to add it to our sqlite database.
 		*
-		*********************************/
+		*********************************/	
 
-		//open a database pointer and an error check integer
-		sqlite3 *db;
-		int rc;
 
-		//if return==1, error opening database...
-		rc = sqlite3_open(dbname, &db);
 
-		if (rc) //check if database connection was successful
-		{
-			printf("Error connecting to database.  %s\n", sqlite3_errmsg(db));
-		}
-		else//if so, add this data to the db.
-		{
-			//Lets add the data to the database.  Delimited into tables by space
-			printf("Add data to table.\n");
-		}
-
-		sqlite3_close(db);
+		
 
 
 		//close the file
@@ -83,9 +78,11 @@ void my_handler(int signum)
 
 int main(int argc, char *argv[]){
 
+
+
 	/*********************************
 	*
-	*  First, we want to compose the arguments that need to be passed into our data stream process.  We will start by parsing the config file.
+	*  First, we want to initialize our database and compose the arguments that need to be passed into our data stream process.  We will start by parsing the config file.
 	*
 	*********************************/
 
@@ -121,6 +118,20 @@ int main(int argc, char *argv[]){
 	*
 	*********************************/
 
+	//execute the db initializer.  First build an arg list.
+	static char *argv3[] = {"./db_init", "", NULL};
+	argv3[1] = (char *)malloc(sizeof(dbname));
+	sprintf(argv3[1], "%s", dbname);
+
+	pid_t pid = fork();
+	if(pid == 0)
+	{
+		printf("Forking DB init process.\n");
+		execv("./db_init", argv3);
+	}
+
+	free(argv3[1]);
+
 	
 	//declare argument list for stream generator
 	static char *argv2[] = {"./datagen", "5", "outputfile.txt", "SIGUSR1", "", "usrinput", NULL};
@@ -147,7 +158,7 @@ int main(int argc, char *argv[]){
 	}
 
 	//fork the parent process and create a child process for our data stream
-	pid_t pid = fork();
+	pid = fork();
 
 	//in the child process
 	if(pid == 0)
