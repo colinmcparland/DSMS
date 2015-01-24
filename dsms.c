@@ -11,6 +11,10 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/types.h> 
+#include <sqlite3.h>
+
+char *usr1;
+char *dbname;
 
 /*********************************
 *
@@ -38,7 +42,33 @@ void my_handler(int signum)
 	
 		//read a line from the shared file
 		fgets(line, 100, fp);
-		printf("%s\n", line);
+		//printf("%s\n", line);
+
+		/*********************************
+		*
+		*  Line acquired.  Now we need to add it to our sqlite database.
+		*
+		*********************************/
+
+		//open a database pointer and an error check integer
+		sqlite3 *db;
+		int rc;
+
+		//if return==1, error opening database...
+		rc = sqlite3_open(dbname, &db);
+
+		if (rc) //check if database connection was successful
+		{
+			printf("Error connecting to database.  %s\n", sqlite3_errmsg(db));
+		}
+		else//if so, add this data to the db.
+		{
+			//Lets add the data to the database.  Delimited into tables by space
+			printf("Add data to table.\n");
+		}
+
+		sqlite3_close(db);
+
 
 		//close the file
 		fclose(fp);
@@ -63,9 +93,9 @@ int main(int argc, char *argv[]){
 	FILE *fp1 = fopen(argv[1], "r");
 
 	int i;
-	char *dbname = (char *)malloc(256);
+	dbname = (char *)malloc(256);
 	char *initfile = (char *)malloc(256);
-	char *usr1 = (char *)malloc(256);
+	usr1 = (char *)malloc(256);
 	int clean;
 
 	//store each line in a variable.
