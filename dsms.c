@@ -69,7 +69,7 @@ void my_handler(int signum)
 		char *line = (char *)malloc(100);
 	
 		//open the shared file up for reading.  Used manual name instead of argv[2] since not accessible in sig handler
-		FILE *fp = fopen("outputfile.txt", "r");
+		FILE *fp = fopen(usr1, "r");
 	
 		//read a line from the shared file
 		fgets(line, 100, fp);
@@ -118,7 +118,7 @@ void my_handler(int signum)
 		fclose(fp);
 
 		//open and close the shared file to clear it and make room for new data
-		fp = fopen("outputfile.txt", "w");
+		fp = fopen(usr1, "w");
 
 		//close the file
 		fclose(fp);
@@ -213,15 +213,19 @@ int main(int argc, char *argv[]){
 		{
 			case 0:
 				fgets(dbname, 256, fp1);
+				break;
 			case 1:
 				fgets(initfile, 256, fp1);
+				break;
 			case 2:
-				fgets(usr1, 256, fp1);
+				fscanf(fp1, "%s", usr1);
 			case 3:
 				fscanf(fp1, "%d", &clean);
+				break;
 
 		}
 	}
+
 
 	/*********************************
 	*
@@ -250,13 +254,17 @@ int main(int argc, char *argv[]){
 
 
 	//declare argument list for stream generator
-	static char *argv2[] = {"./datagen", "5", "outputfile.txt", "SIGUSR1", "", "usrinput", NULL};
+	static char *argv2[] = {"./datagen", "5", "", "SIGUSR1", "", "usrinput", NULL};
 
 	//get current process ID, add it to the arg list
 	static int curr;
 	curr = getpid();
 	argv2[4] = (char *)malloc(sizeof(curr));
 	sprintf(argv2[4], "%d", (int)curr);
+
+	//put shared file name in arguments
+	argv2[2] = (char *)malloc(sizeof(usr1));
+	sprintf(argv2[2], "%s", usr1);
 
 
 	/*********************************
@@ -316,17 +324,12 @@ int main(int argc, char *argv[]){
 		char *cmd;  //sql command holder
 		cmd = malloc(256);
 		int rc;  //error checking
-		char *qs = "quit";
 
 
 		while(1)
 		{
 			printf("Please enter an SQL statement.\n");
 			fgets(cmd, 256, stdin);
-
-			//quit the program if needed
-			printf("%d", strcmp(cmd, qs));
-
 
 			//open a new database pointer
 			sqlite3 *db;
