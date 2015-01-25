@@ -19,16 +19,67 @@ int main(int argc, char *argv[])
 
 		char *sql;
 
-		sql = "DELETE FROM TEAM;";
+		sql = "DELETE FROM LEAFS;DELETE FROM STARS;DELETE FROM REDWINGS;";
 
-		sqlite3_exec(db, sql, 0, 0, 0);
+		rc = sqlite3_exec(db, sql, 0, 0, 0);
 
-		sql = "CREATE TABLE TEAM("\
+   		if( rc != SQLITE_OK )
+   		{
+   			//fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db));
+   		}
+   		else
+   		{
+      		
+  		}
+
+		sql = "CREATE TABLE LEAFS("\
 			"Name varchar(255) NOT NULL,"\
 			"Number int NOT NULL,"\
 			"Position varchar(255) NOT NULL);";
-		//execute the sql
-		sqlite3_exec(db, sql, 0, 0, 0);
+
+			rc = sqlite3_exec(db, sql, 0, 0, 0);
+
+   			if( rc != SQLITE_OK )
+   			{
+   				//fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db));
+   			}
+   			else
+   			{
+      			
+  			}
+
+
+		sql = "CREATE TABLE STARS("\
+			"Name varchar(255) NOT NULL,"\
+			"Number int NOT NULL,"\
+			"Position varchar (255) NOT NULL);";
+
+			rc = sqlite3_exec(db, sql, 0, 0, 0);
+
+   			if( rc != SQLITE_OK )
+   			{
+   				//fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db));
+   			}
+   			else
+   			{
+      			
+  			}
+
+		sql = "CREATE TABLE REDWINGS("\
+			"Name varchar(255) NOT NULL,"\
+			"Number int NOT NULL,"\
+			"Position varchar(255) NOT NULL);";	
+
+			rc = sqlite3_exec(db, sql, 0, 0, 0);
+
+   			if( rc != SQLITE_OK )
+   			{
+   				//fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db));
+   			}
+   			else
+   			{
+      			
+  			}
 
   		sqlite3_close(db);
 

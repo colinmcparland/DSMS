@@ -84,6 +84,7 @@ void my_handler(int signum)
 		char *name;
 		char *num;
 		char *pos;
+		char *team;
 		char *token;
 
 		//first lets parse the line using spaces as a delimiter.
@@ -99,6 +100,11 @@ void my_handler(int signum)
 		token = strtok(NULL, " ");
 		pos = token;
 
+		//get team
+		token = strtok(NULL, " ");
+		team = token;
+		team[strlen(team) - 1] = '\0';  //add a termination char instead of newline
+
 		//now add it to the database!
 		sqlite3 *db;
 		sqlite3_open(dbname, &db);
@@ -106,7 +112,7 @@ void my_handler(int signum)
 		//write an sql command
 		char *sql;
 
-		sql = sqlite3_mprintf("INSERT INTO TEAM (NAME, NUMBER, POSITION) VALUES ('%q', '%q', '%q')", name, num, pos);
+		sql = sqlite3_mprintf("INSERT INTO '%q' (NAME, NUMBER, POSITION) VALUES ('%q', '%q', '%q')", team, name, num, pos);
 
 		//execute the command
 		sqlite3_exec(db, sql, 0, 0, 0);
@@ -141,7 +147,7 @@ void my_handler(int signum)
 		//write an sql command
 		char *sql;
 
-		sql = "DELETE FROM TEAM;";
+		sql = "DELETE FROM LEAFS;DELETE FROM STARS;DELETE FROM REDWINGS;";
 		//execute the command
 		sqlite3_exec(db, sql, 0, 0, 0);
 
